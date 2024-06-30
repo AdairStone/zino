@@ -104,6 +104,7 @@ where
     #[cfg(feature = "jwt")]
     pub fn try_from_jwt_claims(claims: JwtClaims) -> Result<Self, Error> {
         let data = claims.data();
+        tracing::info!("claim data: {:?}", data);
         let user_id = claims
             .subject()
             .map(|s| s.into())

@@ -1,6 +1,7 @@
 use super::Application;
 use crate::extension::TomlTableExt;
 use std::{fs, io, sync::OnceLock, time::Duration};
+use chrono::{DateTime, FixedOffset, Local, Offset, Utc};
 use tracing::Level;
 use tracing_appender::{
     non_blocking::WorkerGuard,
@@ -8,7 +9,7 @@ use tracing_appender::{
 };
 use tracing_subscriber::{
     filter::LevelFilter,
-    fmt::{time::OffsetTime, writer::MakeWriterExt},
+    fmt::{time::{FormatTime, OffsetTime}, writer::MakeWriterExt},
     layer::SubscriberExt,
 };
 
@@ -18,6 +19,30 @@ use sentry_tracing::EventFilter;
 #[cfg(feature = "env-filter")]
 use tracing_subscriber::filter::EnvFilter;
 
+
+pub fn current_date() -> DateTime<FixedOffset> {
+    //default FixedOffset::east_opt(0).unwrap()
+    let local_offset = Local::now().offset().fix().local_minus_utc();
+    let fixed_offset = FixedOffset::east_opt(local_offset)
+    .unwrap_or(FixedOffset::east_opt(8*3600).unwrap());
+    let r = Utc::now().with_timezone(&fixed_offset);
+    return r;
+}
+fn format_date_ymdhms(date: DateTime<FixedOffset>) -> String {
+    let fmt = "%Y-%m-%d %H:%M:%S%.3f";
+    return date.format(fmt).to_string();
+}
+struct LogTimer;
+
+impl FormatTime for LogTimer {
+    fn format_time(&self, w: &mut tracing_subscriber::fmt::format::Writer<'_>) -> std::fmt::Result {
+        write!(
+            w,
+            "{}",
+            format_date_ymdhms(current_date())
+        )
+    }
+}
 /// Initializes the tracing subscriber.
 pub(super) fn init<APP: Application + ?Sized>() {
     if TRACING_APPENDER_GUARD.get().is_some() {
@@ -30,7 +55,8 @@ pub(super) fn init<APP: Application + ?Sized>() {
     tracing_log::LogTracer::init().expect("fail to initialize the log tracer");
 
     // Initialize `OffsetTime` before forking threads
-    let local_offset_time = OffsetTime::local_rfc_3339().expect("could not get local offset");
+    // let local_offset_time = OffsetTime::local_rfc_3339().expect("could not get local offset");
+    // let local_offset_time = Local::now().to_rfc3339();
 
     // Sentry client
     #[cfg(feature = "sentry")]
@@ -136,7 +162,7 @@ pub(super) fn init<APP: Application + ?Sized>() {
         .with_line_number(display_line_number)
         .with_thread_ids(display_thread_ids)
         .with_thread_names(display_thread_names)
-        .with_timer(local_offset_time)
+        .with_timer(LogTimer{})
         .with_writer(stdout.and(non_blocking_appender));
 
     // Optional layers

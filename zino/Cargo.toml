@@ -1,7 +1,7 @@
 [package]
 name = "zino"
 description = "Next-generation framework for composable applications in Rust."
-version = "0.23.1"
+version = "0.24.1"
 rust-version = "1.75"
 edition = "2021"
 license = "MIT"
@@ -58,9 +58,18 @@ dioxus-desktop = [
     "dioxus",
     "zino-core/runtime-tokio",
 ]
-default = []
+dioxus-ssr = [
+    "dep:axum",
+    "dep:dioxus-ssr",
+    "dep:futures",
+    "dioxus",
+    "dioxus-router/ssr",
+    "zino-core/runtime-tokio",
+]
+default = ["logger"]
 i18n = ["zino-core/i18n"]
 jwt = ["zino-core/jwt"]
+logger = ["zino-core/tracing-log", "zino-core/tracing-subscriber"]
 ntex = [
     "dep:futures",
     "dep:ntex",
@@ -73,7 +82,7 @@ orm = ["zino-core/orm"]
 
 [dependencies]
 cfg-if = "1.0"
-serde_json = "1.0.118"
+serde_json = "1.0.124"
 tracing = "0.1.40"
 
 [dependencies.actix-cors]
@@ -85,13 +94,13 @@ version = "0.6.5"
 optional = true
 
 [dependencies.actix-web]
-version = "4.8.0"
+version = "4.9.0"
 optional = true
 default-features = false
 features = ["compress-gzip"]
 
 [dependencies.async-trait]
-version = "0.1.80"
+version = "0.1.81"
 optional = true
 
 [dependencies.axum]
@@ -106,27 +115,32 @@ features = [
 ]
 
 [dependencies.dioxus]
-version = "0.5.0"
+version = "0.5.6"
 optional = true
 
 [dependencies.dioxus-desktop]
-version = "0.5.0"
+version = "0.5.6"
 optional = true
 
 [dependencies.dioxus-router]
-version = "0.5.0"
+version = "0.5.6"
 optional = true
+
+[dependencies.dioxus-ssr]
+version = "0.5.6"
+optional = true
+features = ["incremental"]
 
 [dependencies.futures]
 version = "0.3.30"
 optional = true
 
 [dependencies.image]
-version = "0.25.1"
+version = "0.25.2"
 optional = true
 
 [dependencies.ntex]
-version = "2.0.2"
+version = "2.1.0"
 optional = true
 default-features = false
 features = ["compress", "tokio"]
@@ -136,7 +150,7 @@ version = "2.0.0"
 optional = true
 
 [dependencies.tokio]
-version = "1.38.0"
+version = "1.39.2"
 optional = true
 features = [
     "macros",
@@ -160,6 +174,7 @@ features = [
     "cors",
     "decompression-gzip",
     "fs",
+    "set-header",
     "trace",
 ]
 
@@ -174,4 +189,4 @@ optional = true
 
 [dependencies.zino-core]
 path = "../zino-core"
-version = "0.24.1"
+version = "0.25.1"

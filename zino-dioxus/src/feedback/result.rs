@@ -29,6 +29,7 @@ where
                             class: "message-header",
                             span { { props.title } }
                             button {
+                                r#type: "button",
                                 class: props.close_class,
                                 onclick: move |_event| {
                                     if let Some(handler) = props.on_close.as_ref() {
@@ -62,6 +63,7 @@ where
                             class: "message-header",
                             span { { props.title } }
                             button {
+                                r#type: "button",
                                 class: props.close_class,
                                 onclick: move |_event| {
                                     if let Some(handler) = props.on_close.as_ref() {
@@ -98,6 +100,7 @@ where
                                 class: "message-header",
                                 span { { props.title } }
                                 button {
+                                    r#type: "button",
                                     class: props.close_class,
                                     onclick: move |_event| {
                                         if let Some(handler) = props.on_close.as_ref() {
@@ -120,11 +123,7 @@ where
 
 /// The [`OperationResult`] properties struct for the configuration of the component.
 #[derive(Clone, PartialEq, Props)]
-pub struct OperationResultProps<T, E>
-where
-    T: Clone + PartialEq + 'static,
-    E: Clone + PartialEq + 'static,
-{
+pub struct OperationResultProps<T: Clone + PartialEq + 'static, E: Clone + PartialEq + 'static> {
     /// The class attribute for the component.
     #[props(into, default = "message".into())]
     pub class: Class,

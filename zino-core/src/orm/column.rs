@@ -1,6 +1,7 @@
+use super::query::QueryExt;
 use crate::{
     extension::JsonObjectExt,
-    model::{Column, EncodeColumn},
+    model::{Column, EncodeColumn, Query},
 };
 use convert_case::{Case, Casing};
 
@@ -39,7 +40,7 @@ impl<'a> ColumnExt for Column<'a> {
                 } else if column_type.starts_with("TIMESTAMP") {
                     data_type.starts_with("TIMESTAMP")
                 } else if column_type.starts_with("VARCHAR") {
-                    data_type == "VARCHAR" || data_type == "TEXT"
+                    matches!(data_type.as_str(), "TEXT" | "VARCHAR" | "CHARACTER VARYING")
                 } else {
                     false
                 }
@@ -66,8 +67,9 @@ impl<'a> ColumnExt for Column<'a> {
             .extra()
             .get_str("column_name")
             .unwrap_or_else(|| self.name());
+        let column_field = Query::format_field(column_name);
         let column_type = self.column_type();
-        let mut definition = format!("{column_name} {column_type}");
+        let mut definition = format!("{column_field} {column_type}");
         if column_name == primary_key_name {
             definition += " PRIMARY KEY";
         }

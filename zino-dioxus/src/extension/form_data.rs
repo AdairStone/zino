@@ -5,7 +5,7 @@ use zino_core::{
     extension::JsonObjectExt,
     model::Model,
     validation::Validation,
-    Decimal, Map, Uuid,
+    Decimal, JsonValue, Map, Uuid,
 };
 
 /// Extension trait for `FormData`.
@@ -27,7 +27,7 @@ pub trait FormDataExt {
     fn parse_time(&self) -> Option<Result<Time, chrono::format::ParseError>>;
 
     /// Parses the string value as `DateTime`.
-    fn parse_datetime(&self) -> Option<Result<DateTime, chrono::format::ParseError>>;
+    fn parse_date_time(&self) -> Option<Result<DateTime, chrono::format::ParseError>>;
 
     /// Parses the string value as `Duration`.
     fn parse_duration(&self) -> Option<Result<Duration, datetime::ParseDurationError>>;
@@ -67,7 +67,7 @@ impl FormDataExt for FormData {
     }
 
     #[inline]
-    fn parse_datetime(&self) -> Option<Result<DateTime, chrono::format::ParseError>> {
+    fn parse_date_time(&self) -> Option<Result<DateTime, chrono::format::ParseError>> {
         self.get_string().map(|s| s.parse())
     }
 
@@ -93,7 +93,13 @@ impl FormDataExt for FormData {
         for (key, value) in values.into_iter() {
             let mut vec = value.to_vec();
             if vec.len() == 1 {
-                map.upsert(key, vec.pop());
+                if let Some(value) = vec.pop() {
+                    if value == "null" {
+                        map.upsert(key, JsonValue::Null);
+                    } else {
+                        map.upsert(key, value);
+                    }
+                }
             } else {
                 map.upsert(key, vec);
             }

@@ -5,8 +5,8 @@ pub use crate::{
     extension::FormDataExt,
     feedback::{Message, ModalCard, ModalData, Notification, OperationResult},
     form::{
-        Button, Checkbox, DataEntry, DataSelect, FileUpload, FormAddons, FormField,
-        FormFieldContainer, FormGroup, Input, Radio, Textarea,
+        Button, Buttons, Checkbox, DataEntry, DataSelect, FileUpload, FormAddons, FormField,
+        FormFieldContainer, FormGroup, Input, Progress, Radio, Textarea,
     },
     icon::{Icon, IconText, SvgIcon},
     layout::{Columns, Container, FluidContainer, MainContainer},
@@ -15,5 +15,8 @@ pub use crate::{
         NavbarLink, NavbarMenu, NavbarStart, Pagination, Sidebar,
     },
     theme::Theme,
-    typography::{Card, FixedWidthSpan, Markdown, Tag, Tags},
+    typography::{Card, FixedWidthSpan, Markdown, Tag, Tags, TuiEditor},
 };
+
+#[cfg(feature = "clipboard")]
+pub use crate::form::CopyToClipboard;

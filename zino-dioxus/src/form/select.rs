@@ -5,7 +5,7 @@ use zino_core::SharedString;
 
 /// A control that provides a menu of data entries.
 pub fn DataSelect<T: DataEntry + Clone + PartialEq>(props: DataSelectProps<T>) -> Element {
-    let options = props.options;
+    let options = props.options.unwrap_or_default();
     let selected_value = props.selected;
     let required = props.required;
     let selected_option = options
@@ -39,7 +39,7 @@ pub fn DataSelect<T: DataEntry + Clone + PartialEq>(props: DataSelectProps<T>) -
                 },
                 if !required && !props.empty.as_ref().is_empty() {
                     option {
-                        value: "",
+                        value: "null",
                         { props.empty }
                     }
                 }
@@ -63,7 +63,8 @@ pub struct DataSelectProps<T: Clone + PartialEq + 'static> {
     #[props(into, default = "select".into())]
     pub class: Class,
     /// The data options.
-    pub options: Vec<T>,
+    #[props(into)]
+    pub options: Option<Vec<T>>,
     /// The selected option value.
     #[props(into, default)]
     pub selected: SharedString,

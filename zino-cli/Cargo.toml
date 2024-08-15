@@ -1,7 +1,7 @@
 [package]
 name = "zino-cli"
 description = "CLI tools for zino."
-version = "0.3.3"
+version = "0.4.0"
 rust-version = "1.75"
 edition = "2021"
 license = "MIT"
@@ -11,18 +11,37 @@ homepage = "https://github.com/zino-rs/zino"
 repository = "https://github.com/zino-rs/zino"
 documentation = "https://docs.rs/zino-cli"
 readme = "README.md"
+include = ["public/**/*", "src/**/*", "Cargo.toml"]
 
 [[bin]]
 name = "zli"
 path = "src/main.rs"
 
 [dependencies]
-log = "0.4.21"
+git2 = "0.19.0"
+include_dir = "0.7.4"
+log = "0.4.22"
+taplo = "0.13.0"
+toml_edit = "0.22.20"
+walkdir = "2.5.0"
+
+[dependencies.axum]
+version = "0.7.5"
+default-features = false
 
 [dependencies.clap]
-version = "4.5.7"
+version = "4.5.15"
 features = ["color", "derive"]
+
+[dependencies.serde]
+version = "1.0.205"
+features = ["derive"]
+
+[dependencies.zino]
+path = "../zino"
+version = "0.24.1"
+features = ["axum"]
 
 [dependencies.zino-core]
 path = "../zino-core"
-version = "0.24.1"
+version = "0.25.1"

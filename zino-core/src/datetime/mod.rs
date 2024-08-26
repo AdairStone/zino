@@ -2,8 +2,7 @@
 
 use crate::{AvroValue, JsonValue};
 use chrono::{
-    format::ParseError, Datelike, Days, Local, Months, NaiveDate, NaiveDateTime, NaiveTime,
-    SecondsFormat, TimeZone, Timelike, Utc, Weekday,
+    format::ParseError, Datelike, Days, FixedOffset, Local, Months, NaiveDate, NaiveDateTime, NaiveTime, SecondsFormat, TimeZone, Timelike, Utc, Weekday
 };
 use serde::{Deserialize, Serialize, Serializer};
 use std::{
@@ -204,6 +203,11 @@ impl DateTime {
     /// Returns a date-time string in the format `%Y-%m-%d %H:%M:%S` with the `Local` time zone.
     pub fn format_local(&self) -> String {
         format!("{}", self.0.format("%Y-%m-%d %H:%M:%S"))
+    }
+
+    pub fn format_with_zone(&self, tz: &FixedOffset) -> String {
+        let datetime = self.0.with_timezone(tz);
+        format!("{}", datetime.format("%Y-%m-%d %H:%M:%S"))
     }
 
     /// Returns a date-time string in the format `%Y-%m-%d %H:%M:%S` with the `Utc` time zone.
